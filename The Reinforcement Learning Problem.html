@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-09-19 Tue 18:23 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Reinforcement Learning Problem</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="mingzailao" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">The Reinforcement Learning Problem</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org90f302b">1. Elements of Reinforcement Learning</a>
+<ul>
+<li><a href="#orga2b7502">1.1. policy</a></li>
+<li><a href="#orgfd83a06">1.2. reward signal</a></li>
+<li><a href="#org14b3b1b">1.3. value function</a></li>
+<li><a href="#orgb4dfd76">1.4. the model of environment</a></li>
+</ul>
+</li>
+<li><a href="#org70a75b3">2. Code</a>
+<ul>
+<li><a href="#orge11ef2f">2.1. Tic-Tac-Toe</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org90f302b" class="outline-2">
+<h2 id="org90f302b"><span class="section-number-2">1</span> Elements of Reinforcement Learning</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>policy</li>
+<li>reward signal</li>
+<li>value function</li>
+<li>a model of environment</li>
+</ul>
+</div>
+<div id="outline-container-orga2b7502" class="outline-3">
+<h3 id="orga2b7502"><span class="section-number-3">1.1</span> policy</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+defines the learning agent’s way of behaving at a given time.
+</p>
+</div>
+</div>
+<div id="outline-container-orgfd83a06" class="outline-3">
+<h3 id="orgfd83a06"><span class="section-number-3">1.2</span> reward signal</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+defines the goal in a reinforcement learning problem.
+</p>
+</div>
+</div>
+<div id="outline-container-org14b3b1b" class="outline-3">
+<h3 id="org14b3b1b"><span class="section-number-3">1.3</span> value function</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+specifies what is good in the long run.
+</p>
+</div>
+</div>
+<div id="outline-container-orgb4dfd76" class="outline-3">
+<h3 id="orgb4dfd76"><span class="section-number-3">1.4</span> the model of environment</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+This is something that mimics the behavior of the environment, or more generally, that allows inferences to be made about how the environment will behave.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org70a75b3" class="outline-2">
+<h2 id="org70a75b3"><span class="section-number-2">2</span> Code</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-orge11ef2f" class="outline-3">
+<h3 id="orge11ef2f"><span class="section-number-3">2.1</span> Tic-Tac-Toe</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #0000FF;">from</span> __future__ <span style="color: #0000FF;">import</span> print_function
+<span style="color: #0000FF;">import</span> numpy <span style="color: #0000FF;">as</span> np
+<span style="color: #0000FF;">import</span> pickle
+<span style="color: #BA36A5;">BOARD_ROWS</span>=<span style="color: #D0372D;">3</span>
+<span style="color: #BA36A5;">BOARD_COLS</span>=<span style="color: #D0372D;">3</span>
+<span style="color: #BA36A5;">BOARD_SIZE</span>=BOARD_COLS*BOARD_ROWS
+
+<span style="color: #0000FF;">class</span> <span style="color: #6434A3;">State</span>:
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">__init__</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #008000;">"docstring"</span>
+        <span style="color: #0000FF;">self</span>.data=np.zeros<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>BOARD_ROWS,BOARD_COLS<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">self</span>.winner=<span style="color: #D0372D;">None</span>
+        <span style="color: #0000FF;">self</span>.hashVal=<span style="color: #D0372D;">None</span>
+        <span style="color: #0000FF;">self</span>.end=<span style="color: #D0372D;">None</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">getHash</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.hashVal <span style="color: #0000FF;">is</span> <span style="color: #D0372D;">None</span>:
+            <span style="color: #0000FF;">self</span>.hashVal=<span style="color: #D0372D;">0</span>
+            <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #0000FF;">self</span>.data.reshape<span style="color: #707183;">(</span>BOARD_SIZE<span style="color: #707183;">)</span>:
+                <span style="color: #0000FF;">if</span> i==-<span style="color: #D0372D;">1</span>:
+                    <span style="color: #BA36A5;">i</span>=<span style="color: #D0372D;">2</span>
+                <span style="color: #0000FF;">self</span>.hashVal=<span style="color: #0000FF;">self</span>.hashVal*<span style="color: #D0372D;">3</span>+i
+        <span style="color: #0000FF;">return</span> <span style="color: #006FE0;">int</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.hashVal<span style="color: #707183;">)</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">isEnd</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.end <span style="color: #0000FF;">is</span> <span style="color: #0000FF;">not</span> <span style="color: #D0372D;">None</span>:
+            <span style="color: #0000FF;">return</span> <span style="color: #0000FF;">self</span>.end
+        <span style="color: #BA36A5;">results</span>=<span style="color: #707183;">[]</span>
+        <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>,BOARD_ROWS<span style="color: #707183;">)</span>:
+            results.append<span style="color: #707183;">(</span>np.<span style="color: #006FE0;">sum</span><span style="color: #7388D6;">(</span><span style="color: #0000FF;">self</span>.data<span style="color: #909183;">[</span>i,:<span style="color: #909183;">]</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>,BOARD_COLS<span style="color: #707183;">)</span>:
+            results.append<span style="color: #707183;">(</span>np.<span style="color: #006FE0;">sum</span><span style="color: #7388D6;">(</span><span style="color: #0000FF;">self</span>.data<span style="color: #909183;">[</span>:,i<span style="color: #909183;">]</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+        results.append<span style="color: #707183;">(</span><span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>,BOARD_COLS<span style="color: #707183;">)</span>:
+            <span style="color: #BA36A5;">results</span><span style="color: #707183;">[</span>-<span style="color: #D0372D;">1</span><span style="color: #707183;">]</span> += <span style="color: #0000FF;">self</span>.data<span style="color: #707183;">[</span>i, i<span style="color: #707183;">]</span>
+        results.append<span style="color: #707183;">(</span><span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>, BOARD_ROWS<span style="color: #707183;">)</span>:
+            <span style="color: #BA36A5;">results</span><span style="color: #707183;">[</span>-<span style="color: #D0372D;">1</span><span style="color: #707183;">]</span> += <span style="color: #0000FF;">self</span>.data<span style="color: #707183;">[</span>i, BOARD_ROWS - <span style="color: #D0372D;">1</span> - i<span style="color: #707183;">]</span>
+        <span style="color: #0000FF;">for</span> result <span style="color: #0000FF;">in</span> results:
+            <span style="color: #0000FF;">if</span> result == <span style="color: #D0372D;">3</span>:
+                <span style="color: #0000FF;">self</span>.winner = <span style="color: #D0372D;">1</span>
+                <span style="color: #0000FF;">self</span>.end = <span style="color: #D0372D;">True</span>
+                <span style="color: #0000FF;">return</span> <span style="color: #0000FF;">self</span>.end
+            <span style="color: #0000FF;">if</span> result == -<span style="color: #D0372D;">3</span>:
+                <span style="color: #0000FF;">self</span>.winner = -<span style="color: #D0372D;">1</span>
+                <span style="color: #0000FF;">self</span>.end = <span style="color: #D0372D;">True</span>
+                <span style="color: #0000FF;">return</span> <span style="color: #0000FF;">self</span>.end
+        <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">whether it's a tie</span>
+        <span style="color: #BA36A5;">sum_</span> = np.<span style="color: #006FE0;">sum</span><span style="color: #707183;">(</span>np.<span style="color: #006FE0;">abs</span><span style="color: #7388D6;">(</span><span style="color: #0000FF;">self</span>.data<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">if</span> sum_ == BOARD_ROWS * BOARD_COLS:
+            <span style="color: #0000FF;">self</span>.winner = <span style="color: #D0372D;">0</span>
+            <span style="color: #0000FF;">self</span>.end = <span style="color: #D0372D;">True</span>
+            <span style="color: #0000FF;">return</span> <span style="color: #0000FF;">self</span>.end
+
+        <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">game is still going on</span>
+        <span style="color: #0000FF;">self</span>.end = <span style="color: #D0372D;">False</span>
+        <span style="color: #0000FF;">return</span> <span style="color: #0000FF;">self</span>.end
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">nextState</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, i, j, symbol<span style="color: #707183;">)</span>:
+        <span style="color: #BA36A5;">newState</span> = State<span style="color: #707183;">()</span>
+        <span style="color: #BA36A5;">newState.data</span> = np.copy<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.data<span style="color: #707183;">)</span>
+        <span style="color: #BA36A5;">newState.data</span><span style="color: #707183;">[</span>i, j<span style="color: #707183;">]</span> = symbol
+        <span style="color: #0000FF;">return</span> newState
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">show</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>, BOARD_ROWS<span style="color: #707183;">)</span>:
+            <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span><span style="color: #008000;">'-------------'</span><span style="color: #707183;">)</span>
+            <span style="color: #BA36A5;">out</span> = <span style="color: #008000;">'| '</span>
+            <span style="color: #0000FF;">for</span> j <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>, BOARD_COLS<span style="color: #707183;">)</span>:
+                <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.data<span style="color: #707183;">[</span>i, j<span style="color: #707183;">]</span> == <span style="color: #D0372D;">1</span>:
+                    <span style="color: #BA36A5;">token</span> = <span style="color: #008000;">'*'</span>
+                <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.data<span style="color: #707183;">[</span>i, j<span style="color: #707183;">]</span> == <span style="color: #D0372D;">0</span>:
+                    <span style="color: #BA36A5;">token</span> = <span style="color: #008000;">'0'</span>
+                <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.data<span style="color: #707183;">[</span>i, j<span style="color: #707183;">]</span> == -<span style="color: #D0372D;">1</span>:
+                    <span style="color: #BA36A5;">token</span> = <span style="color: #008000;">'x'</span>
+                <span style="color: #BA36A5;">out</span> += token + <span style="color: #008000;">' | '</span>
+            <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span>out<span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span><span style="color: #008000;">'-------------'</span><span style="color: #707183;">)</span>
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">getAllStatesImpl</span><span style="color: #707183;">(</span>currentState, currentSymbol, allStates<span style="color: #707183;">)</span>:
+    <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>, BOARD_ROWS<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">for</span> j <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>, BOARD_COLS<span style="color: #707183;">)</span>:
+            <span style="color: #0000FF;">if</span> currentState.data<span style="color: #707183;">[</span>i<span style="color: #707183;">][</span>j<span style="color: #707183;">]</span> == <span style="color: #D0372D;">0</span>:
+                <span style="color: #BA36A5;">newState</span> = currentState.nextState<span style="color: #707183;">(</span>i, j, currentSymbol<span style="color: #707183;">)</span>
+                <span style="color: #BA36A5;">newHash</span> = newState.getHash<span style="color: #707183;">()</span>
+                <span style="color: #0000FF;">if</span> newHash <span style="color: #0000FF;">not</span> <span style="color: #0000FF;">in</span> allStates.keys<span style="color: #707183;">()</span>:
+                    <span style="color: #BA36A5;">isEnd</span> = newState.isEnd<span style="color: #707183;">()</span>
+                    <span style="color: #BA36A5;">allStates</span><span style="color: #707183;">[</span>newHash<span style="color: #707183;">]</span> = <span style="color: #707183;">(</span>newState, isEnd<span style="color: #707183;">)</span>
+                    <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">not</span> isEnd:
+                        getAllStatesImpl<span style="color: #707183;">(</span>newState, -currentSymbol, allStates<span style="color: #707183;">)</span>
+
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">getAllStates</span><span style="color: #707183;">()</span>:
+    <span style="color: #BA36A5;">currentSysmbol</span> = <span style="color: #D0372D;">1</span>
+    <span style="color: #BA36A5;">currentState</span>   = State<span style="color: #707183;">()</span>
+    <span style="color: #BA36A5;">allStates</span>=<span style="color: #006FE0;">dict</span><span style="color: #707183;">()</span>
+    <span style="color: #BA36A5;">allStates</span><span style="color: #707183;">[</span>currentState.getHash<span style="color: #7388D6;">()</span><span style="color: #707183;">]</span> = <span style="color: #707183;">(</span>currentState,currentState.isEnd<span style="color: #7388D6;">()</span><span style="color: #707183;">)</span>
+    getAllStatesImpl<span style="color: #707183;">(</span>currentState,currentSysmbol,allStates<span style="color: #707183;">)</span>
+    <span style="color: #0000FF;">return</span> allStates
+
+
+<span style="color: #BA36A5;">allStates</span> = getAllStates<span style="color: #707183;">()</span>
+
+<span style="color: #0000FF;">class</span> <span style="color: #6434A3;">Judger</span>:
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">__init__</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>,player1,player2,feedback=<span style="color: #D0372D;">True</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.p1=player1
+        <span style="color: #0000FF;">self</span>.p2=player2
+        <span style="color: #0000FF;">self</span>.feedback=feedback
+        <span style="color: #0000FF;">self</span>.currentPlayer=<span style="color: #D0372D;">None</span>
+        <span style="color: #0000FF;">self</span>.p1Symbol =<span style="color: #D0372D;">1</span>
+        <span style="color: #0000FF;">self</span>.p2Symbol =-<span style="color: #D0372D;">1</span>
+        <span style="color: #0000FF;">self</span>.p1.setSymbol<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.p1Symbol<span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">self</span>.p2.setSymbol<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.p2Symbol<span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">self</span>.currentState=State<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">self</span>.allStates=allStates
+    <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">give reward to two players</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">giveReward</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.currentState.winner == <span style="color: #0000FF;">self</span>.p1Symbol:
+            <span style="color: #0000FF;">self</span>.p1.feedReward<span style="color: #707183;">(</span><span style="color: #D0372D;">1</span><span style="color: #707183;">)</span>
+            <span style="color: #0000FF;">self</span>.p2.feedReward<span style="color: #707183;">(</span><span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">elif</span> <span style="color: #0000FF;">self</span>.currentState.winner == <span style="color: #0000FF;">self</span>.p2Symbol:
+            <span style="color: #0000FF;">self</span>.p1.feedReward<span style="color: #707183;">(</span><span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+            <span style="color: #0000FF;">self</span>.p2.feedReward<span style="color: #707183;">(</span><span style="color: #D0372D;">1</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">else</span>:
+            <span style="color: #0000FF;">self</span>.p1.feedReward<span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">1</span><span style="color: #707183;">)</span>
+            <span style="color: #0000FF;">self</span>.p2.feedReward<span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">5</span><span style="color: #707183;">)</span>
+
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">feedCurrentState</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.p1.feedState<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.currentState<span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">self</span>.p2.feedState<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.currentState<span style="color: #707183;">)</span>
+
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">reset</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.p1.reset<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">self</span>.p2.reset<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">self</span>.currentState = State<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">self</span>.currentPlayer = <span style="color: #D0372D;">None</span>
+
+    <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">@show: if True, print each board during the game</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">play</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, show=<span style="color: #D0372D;">False</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.reset<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">self</span>.feedCurrentState<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">while</span> <span style="color: #D0372D;">True</span>:
+            <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">set current player</span>
+            <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.currentPlayer == <span style="color: #0000FF;">self</span>.p1:
+                <span style="color: #0000FF;">self</span>.currentPlayer = <span style="color: #0000FF;">self</span>.p2
+            <span style="color: #0000FF;">else</span>:
+                <span style="color: #0000FF;">self</span>.currentPlayer = <span style="color: #0000FF;">self</span>.p1
+            <span style="color: #0000FF;">if</span> show:
+                <span style="color: #0000FF;">self</span>.currentState.show<span style="color: #707183;">()</span>
+            <span style="color: #707183;">[</span>i, j, symbol<span style="color: #707183;">]</span> = <span style="color: #0000FF;">self</span>.currentPlayer.takeAction<span style="color: #707183;">()</span>
+            <span style="color: #0000FF;">self</span>.currentState = <span style="color: #0000FF;">self</span>.currentState.nextState<span style="color: #707183;">(</span>i, j, symbol<span style="color: #707183;">)</span>
+            <span style="color: #BA36A5;">hashValue</span> = <span style="color: #0000FF;">self</span>.currentState.getHash<span style="color: #707183;">()</span>
+            <span style="color: #0000FF;">self</span>.currentState, <span style="color: #BA36A5;">isEnd</span> = <span style="color: #0000FF;">self</span>.allStates<span style="color: #707183;">[</span>hashValue<span style="color: #707183;">]</span>
+            <span style="color: #0000FF;">self</span>.feedCurrentState<span style="color: #707183;">()</span>
+            <span style="color: #0000FF;">if</span> isEnd:
+                <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.feedback:
+                    <span style="color: #0000FF;">self</span>.giveReward<span style="color: #707183;">()</span>
+                <span style="color: #0000FF;">return</span> <span style="color: #0000FF;">self</span>.currentState.winner
+
+
+<span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">AI player</span>
+<span style="color: #0000FF;">class</span> <span style="color: #6434A3;">Player</span>:
+    <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">@stepSize: step size to update estimations</span>
+    <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">@exploreRate: possibility to explore</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">__init__</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, stepSize = <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">1</span>, exploreRate=<span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">1</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.allStates = allStates
+        <span style="color: #0000FF;">self</span>.estimations = <span style="color: #006FE0;">dict</span><span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">self</span>.stepSize = stepSize
+        <span style="color: #0000FF;">self</span>.exploreRate = exploreRate
+        <span style="color: #0000FF;">self</span>.states = <span style="color: #707183;">[]</span>
+
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">reset</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.states = <span style="color: #707183;">[]</span>
+
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">setSymbol</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, symbol<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.symbol = symbol
+        <span style="color: #0000FF;">for</span> <span style="color: #006FE0;">hash</span> <span style="color: #0000FF;">in</span> <span style="color: #0000FF;">self</span>.allStates.keys<span style="color: #707183;">()</span>:
+            <span style="color: #707183;">(</span>state, isEnd<span style="color: #707183;">)</span> = <span style="color: #0000FF;">self</span>.allStates<span style="color: #707183;">[</span><span style="color: #006FE0;">hash</span><span style="color: #707183;">]</span>
+            <span style="color: #0000FF;">if</span> isEnd:
+                <span style="color: #0000FF;">if</span> state.winner == <span style="color: #0000FF;">self</span>.symbol:
+                    <span style="color: #0000FF;">self</span>.estimations<span style="color: #707183;">[</span><span style="color: #006FE0;">hash</span><span style="color: #707183;">]</span> = <span style="color: #D0372D;">1</span>.<span style="color: #D0372D;">0</span>
+                <span style="color: #0000FF;">else</span>:
+                    <span style="color: #0000FF;">self</span>.estimations<span style="color: #707183;">[</span><span style="color: #006FE0;">hash</span><span style="color: #707183;">]</span> = <span style="color: #D0372D;">0</span>
+            <span style="color: #0000FF;">else</span>:
+                <span style="color: #0000FF;">self</span>.estimations<span style="color: #707183;">[</span><span style="color: #006FE0;">hash</span><span style="color: #707183;">]</span> = <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">5</span>
+
+    <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">accept a state</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">feedState</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, state<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.states.append<span style="color: #707183;">(</span>state<span style="color: #707183;">)</span>
+
+    <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">update estimation according to reward</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">feedReward</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, reward<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">if</span> <span style="color: #006FE0;">len</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.states<span style="color: #707183;">)</span> == <span style="color: #D0372D;">0</span>:
+            <span style="color: #0000FF;">return</span>
+        <span style="color: #0000FF;">self</span>.states = <span style="color: #707183;">[</span>state.getHash<span style="color: #7388D6;">()</span> <span style="color: #0000FF;">for</span> state <span style="color: #0000FF;">in</span> <span style="color: #0000FF;">self</span>.states<span style="color: #707183;">]</span>
+        <span style="color: #BA36A5;">target</span> = reward
+        <span style="color: #0000FF;">for</span> latestState <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">reversed</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.states<span style="color: #707183;">)</span>:
+            <span style="color: #BA36A5;">value</span> = <span style="color: #0000FF;">self</span>.estimations<span style="color: #707183;">[</span>latestState<span style="color: #707183;">]</span> + <span style="color: #0000FF;">self</span>.stepSize * <span style="color: #707183;">(</span>target - <span style="color: #0000FF;">self</span>.estimations<span style="color: #7388D6;">[</span>latestState<span style="color: #7388D6;">]</span><span style="color: #707183;">)</span>
+            <span style="color: #0000FF;">self</span>.estimations<span style="color: #707183;">[</span>latestState<span style="color: #707183;">]</span> = value
+            <span style="color: #BA36A5;">target</span> = value
+        <span style="color: #0000FF;">self</span>.states = <span style="color: #707183;">[]</span>
+
+    <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">determine next action</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">takeAction</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #BA36A5;">state</span> = <span style="color: #0000FF;">self</span>.states<span style="color: #707183;">[</span>-<span style="color: #D0372D;">1</span><span style="color: #707183;">]</span>
+        <span style="color: #BA36A5;">nextStates</span> = <span style="color: #707183;">[]</span>
+        <span style="color: #BA36A5;">nextPositions</span> = <span style="color: #707183;">[]</span>
+        <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span>BOARD_ROWS<span style="color: #707183;">)</span>:
+            <span style="color: #0000FF;">for</span> j <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span>BOARD_COLS<span style="color: #707183;">)</span>:
+                <span style="color: #0000FF;">if</span> state.data<span style="color: #707183;">[</span>i, j<span style="color: #707183;">]</span> == <span style="color: #D0372D;">0</span>:
+                    nextPositions.append<span style="color: #707183;">(</span><span style="color: #7388D6;">[</span>i, j<span style="color: #7388D6;">]</span><span style="color: #707183;">)</span>
+                    nextStates.append<span style="color: #707183;">(</span>state.nextState<span style="color: #7388D6;">(</span>i, j, <span style="color: #0000FF;">self</span>.symbol<span style="color: #7388D6;">)</span>.getHash<span style="color: #7388D6;">()</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">if</span> np.random.binomial<span style="color: #707183;">(</span><span style="color: #D0372D;">1</span>, <span style="color: #0000FF;">self</span>.exploreRate<span style="color: #707183;">)</span>:
+            np.random.shuffle<span style="color: #707183;">(</span>nextPositions<span style="color: #707183;">)</span>
+            <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Not sure if truncating is the best way to deal with exploratory step</span>
+            <span style="color: #8D8D84;"># </span><span style="color: #8D8D84; font-style: italic;">Maybe it's better to only skip this step rather than forget all the history</span>
+            <span style="color: #0000FF;">self</span>.states = <span style="color: #707183;">[]</span>
+            <span style="color: #BA36A5;">action</span> = nextPositions<span style="color: #707183;">[</span><span style="color: #D0372D;">0</span><span style="color: #707183;">]</span>
+            action.append<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.symbol<span style="color: #707183;">)</span>
+            <span style="color: #0000FF;">return</span> action
+
+        <span style="color: #BA36A5;">values</span> = <span style="color: #707183;">[]</span>
+        <span style="color: #0000FF;">for</span> <span style="color: #006FE0;">hash</span>, pos <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">zip</span><span style="color: #707183;">(</span>nextStates, nextPositions<span style="color: #707183;">)</span>:
+            values.append<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span><span style="color: #0000FF;">self</span>.estimations<span style="color: #909183;">[</span><span style="color: #006FE0;">hash</span><span style="color: #909183;">]</span>, pos<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+        np.random.shuffle<span style="color: #707183;">(</span>values<span style="color: #707183;">)</span>
+        values.sort<span style="color: #707183;">(</span>key=<span style="color: #0000FF;">lambda</span> x: x<span style="color: #7388D6;">[</span><span style="color: #D0372D;">0</span><span style="color: #7388D6;">]</span>, reverse=<span style="color: #D0372D;">True</span><span style="color: #707183;">)</span>
+        <span style="color: #BA36A5;">action</span> = values<span style="color: #707183;">[</span><span style="color: #D0372D;">0</span><span style="color: #707183;">][</span><span style="color: #D0372D;">1</span><span style="color: #707183;">]</span>
+        action.append<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.symbol<span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">return</span> action
+
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">savePolicy</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #BA36A5;">fw</span> = <span style="color: #006FE0;">open</span><span style="color: #707183;">(</span><span style="color: #008000;">'optimal_policy_'</span> + <span style="color: #006FE0;">str</span><span style="color: #7388D6;">(</span><span style="color: #0000FF;">self</span>.symbol<span style="color: #7388D6;">)</span>, <span style="color: #008000;">'wb'</span><span style="color: #707183;">)</span>
+        pickle.dump<span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>.estimations, fw<span style="color: #707183;">)</span>
+        fw.close<span style="color: #707183;">()</span>
+
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">loadPolicy</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #BA36A5;">fr</span> = <span style="color: #006FE0;">open</span><span style="color: #707183;">(</span><span style="color: #008000;">'optimal_policy_'</span> + <span style="color: #006FE0;">str</span><span style="color: #7388D6;">(</span><span style="color: #0000FF;">self</span>.symbol<span style="color: #7388D6;">)</span>,<span style="color: #008000;">'rb'</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">self</span>.estimations = pickle.load<span style="color: #707183;">(</span>fr<span style="color: #707183;">)</span>
+        fr.close<span style="color: #707183;">()</span>
+
+<span style="color: #0000FF;">class</span> <span style="color: #6434A3;">HumanPlayer</span>:
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">__init__</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, stepSize = <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">1</span>, exploreRate=<span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">1</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.symbol = <span style="color: #D0372D;">None</span>
+        <span style="color: #0000FF;">self</span>.currentState = <span style="color: #D0372D;">None</span>
+        <span style="color: #0000FF;">return</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">reset</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">return</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">setSymbol</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, symbol<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.symbol = symbol
+        <span style="color: #0000FF;">return</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">feedState</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, state<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">self</span>.currentState = state
+        <span style="color: #0000FF;">return</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">feedReward</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span>, reward<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">return</span>
+    <span style="color: #0000FF;">def</span> <span style="color: #006699;">takeAction</span><span style="color: #707183;">(</span><span style="color: #0000FF;">self</span><span style="color: #707183;">)</span>:
+        <span style="color: #BA36A5;">data</span> = <span style="color: #006FE0;">int</span><span style="color: #707183;">(</span><span style="color: #006FE0;">input</span><span style="color: #7388D6;">(</span><span style="color: #008000;">"Input your position:"</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+        <span style="color: #BA36A5;">data</span> -= <span style="color: #D0372D;">1</span>
+        <span style="color: #BA36A5;">i</span> = data // <span style="color: #006FE0;">int</span><span style="color: #707183;">(</span>BOARD_COLS<span style="color: #707183;">)</span>
+        <span style="color: #BA36A5;">j</span> = data % BOARD_COLS
+        <span style="color: #0000FF;">if</span> <span style="color: #0000FF;">self</span>.currentState.data<span style="color: #707183;">[</span>i, j<span style="color: #707183;">]</span> != <span style="color: #D0372D;">0</span>:
+            <span style="color: #0000FF;">return</span> <span style="color: #0000FF;">self</span>.takeAction<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">return</span> <span style="color: #707183;">(</span>i, j, <span style="color: #0000FF;">self</span>.symbol<span style="color: #707183;">)</span>
+
+
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">train</span><span style="color: #707183;">(</span>epochs=<span style="color: #D0372D;">20000</span><span style="color: #707183;">)</span>:
+    <span style="color: #BA36A5;">player1</span> = Player<span style="color: #707183;">()</span>
+    <span style="color: #BA36A5;">player2</span> = Player<span style="color: #707183;">()</span>
+    <span style="color: #BA36A5;">judger</span> = Judger<span style="color: #707183;">(</span>player1, player2<span style="color: #707183;">)</span>
+    <span style="color: #BA36A5;">player1Win</span> = <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">0</span>
+    <span style="color: #BA36A5;">player2Win</span> = <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">0</span>
+    <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>, epochs<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span><span style="color: #008000;">"Epoch"</span>, i<span style="color: #707183;">)</span>
+        <span style="color: #BA36A5;">winner</span> = judger.play<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">if</span> winner == <span style="color: #D0372D;">1</span>:
+            <span style="color: #BA36A5;">player1Win</span> += <span style="color: #D0372D;">1</span>
+        <span style="color: #0000FF;">if</span> winner == -<span style="color: #D0372D;">1</span>:
+            <span style="color: #BA36A5;">player2Win</span> += <span style="color: #D0372D;">1</span>
+        judger.reset<span style="color: #707183;">()</span>
+    <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span>player1Win / epochs<span style="color: #707183;">)</span>
+    <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span>player2Win / epochs<span style="color: #707183;">)</span>
+    player1.savePolicy<span style="color: #707183;">()</span>
+    player2.savePolicy<span style="color: #707183;">()</span>
+
+
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">compete</span><span style="color: #707183;">(</span>turns=<span style="color: #D0372D;">500</span><span style="color: #707183;">)</span>:
+    <span style="color: #BA36A5;">player1</span> = Player<span style="color: #707183;">(</span>exploreRate=<span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+    <span style="color: #BA36A5;">player2</span> = Player<span style="color: #707183;">(</span>exploreRate=<span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+    <span style="color: #BA36A5;">judger</span> = Judger<span style="color: #707183;">(</span>player1, player2, <span style="color: #D0372D;">False</span><span style="color: #707183;">)</span>
+    player1.loadPolicy<span style="color: #707183;">()</span>
+    player2.loadPolicy<span style="color: #707183;">()</span>
+    <span style="color: #BA36A5;">player1Win</span> = <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">0</span>
+    <span style="color: #BA36A5;">player2Win</span> = <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">0</span>
+    <span style="color: #0000FF;">for</span> i <span style="color: #0000FF;">in</span> <span style="color: #006FE0;">range</span><span style="color: #707183;">(</span><span style="color: #D0372D;">0</span>, turns<span style="color: #707183;">)</span>:
+        <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span><span style="color: #008000;">"Epoch"</span>, i<span style="color: #707183;">)</span>
+        <span style="color: #BA36A5;">winner</span> = judger.play<span style="color: #707183;">()</span>
+        <span style="color: #0000FF;">if</span> winner == <span style="color: #D0372D;">1</span>:
+            <span style="color: #BA36A5;">player1Win</span> += <span style="color: #D0372D;">1</span>
+        <span style="color: #0000FF;">if</span> winner == -<span style="color: #D0372D;">1</span>:
+            <span style="color: #BA36A5;">player2Win</span> += <span style="color: #D0372D;">1</span>
+        judger.reset<span style="color: #707183;">()</span>
+    <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span>player1Win / turns<span style="color: #707183;">)</span>
+    <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span>player2Win / turns<span style="color: #707183;">)</span>
+
+<span style="color: #0000FF;">def</span> <span style="color: #006699;">play</span><span style="color: #707183;">()</span>:
+    <span style="color: #0000FF;">while</span> <span style="color: #D0372D;">True</span>:
+        <span style="color: #BA36A5;">player1</span> = Player<span style="color: #707183;">(</span>exploreRate=<span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+        <span style="color: #BA36A5;">player2</span> = HumanPlayer<span style="color: #707183;">()</span>
+        <span style="color: #BA36A5;">judger</span> = Judger<span style="color: #707183;">(</span>player1, player2, <span style="color: #D0372D;">False</span><span style="color: #707183;">)</span>
+        player1.loadPolicy<span style="color: #707183;">()</span>
+        <span style="color: #BA36A5;">winner</span> = judger.play<span style="color: #707183;">(</span><span style="color: #D0372D;">True</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">if</span> winner == player2.symbol:
+            <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span><span style="color: #008000;">"Win!"</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">elif</span> winner == player1.symbol:
+            <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span><span style="color: #008000;">"Lose!"</span><span style="color: #707183;">)</span>
+        <span style="color: #0000FF;">else</span>:
+            <span style="color: #0000FF;">print</span><span style="color: #707183;">(</span><span style="color: #008000;">"Tie!"</span><span style="color: #707183;">)</span>
+
+train<span style="color: #707183;">()</span>
+compete<span style="color: #707183;">()</span>
+play<span style="color: #707183;">()</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: mingzailao</p>
+<p class="date">Created: 2017-09-19 Tue 18:23</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
